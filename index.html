@@ -184,7 +184,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 16:11:58" itemprop="dateModified" datetime="2021-12-29T16:11:58+08:00">2021-12-29</time>
+                <time title="修改时间：2021-12-29 22:38:30" itemprop="dateModified" datetime="2021-12-29T22:38:30+08:00">2021-12-29</time>
               </span>
 
           
@@ -282,7 +282,27 @@
 
 <p>​        浏览器和Web服务器根据以上格式来生成消息。</p>
 <p>​        这次探索之旅是从在浏览器顶部的地址栏中输入网址开始的，但浏览器并非只有在这一种场景下才会向Web服务器发送请求消息。比如点击网页中的超级链接，或者在表单中填写信息后迪点击“提交”按钮，这种场景都会触发浏览器的工作，而选用哪种方法也是根据场景来确定的。我们的场景是在地址栏输入网址并显示网页，因此这里应该使用GET方法。如果是表单，在HTML源代码中会在表单的属性中指定使用哪种方法来发送请求，可能是GET也可能是POST。</p>
-<h2 id="2-向DNS服务器查询Web服务器的IP地址"><a href="#2-向DNS服务器查询Web服务器的IP地址" class="headerlink" title="2. 向DNS服务器查询Web服务器的IP地址"></a>2. 向DNS服务器查询Web服务器的IP地址</h2>
+<h2 id="2-向DNS服务器查询Web服务器的IP地址"><a href="#2-向DNS服务器查询Web服务器的IP地址" class="headerlink" title="2. 向DNS服务器查询Web服务器的IP地址"></a>2. 向DNS服务器查询Web服务器的IP地址</h2><h3 id="2-1-IP地址的表示方法"><a href="#2-1-IP地址的表示方法" class="headerlink" title="2.1 IP地址的表示方法"></a>2.1 IP地址的表示方法</h3><ul>
+<li>TCP/IP协议与ip地址的详细信息自行百度</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#IP主体的表达方式</span><br><span class="line">10.11.12.13</span><br><span class="line"></span><br><span class="line">#采用与IP地址主体相同的格式表示子网掩码的方法</span><br><span class="line">10.11.12.13/255.255.255.0</span><br><span class="line"> IP地址主体    子网掩码</span><br><span class="line"></span><br><span class="line">#采用网络号比特数来表示子网掩码的方法</span><br><span class="line">10.11.12.13/24</span><br><span class="line"> IP地址主体  子网掩码</span><br><span class="line"> </span><br><span class="line">#表示子网的地址</span><br><span class="line">10.11.12.0/24	#主机号部分的比特全部为0，这个地址表示的不是单独一台计算机，而是代表整个子网</span><br><span class="line"></span><br><span class="line">#表示子网内广播的地址</span><br><span class="line">10.11.12.255/24 #主机部分比特全为1，这个地址表示对整个子网进行广播</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-Socket库提供查询IP地址的功能"><a href="#2-2-Socket库提供查询IP地址的功能" class="headerlink" title="2.2 Socket库提供查询IP地址的功能"></a>2.2 Socket库提供查询IP地址的功能</h3><p>​        查询IP地址的方法非常简单，只需询问最近的DNS服务器“<a href="http://www.lab.glasscom.com”的IP地址是什么就可以了，DNS服务器会回答说“该服务器的IP地址为“xxx.xxx.xxx.xxx”。那么浏览器是如何向DNS服务器发出查询的呢？">www.lab.glasscom.com”的IP地址是什么就可以了，DNS服务器会回答说“该服务器的IP地址为“xxx.xxx.xxx.xxx”。那么浏览器是如何向DNS服务器发出查询的呢？</a></p>
+<p>​        向DNS服务器发出查询，也就是向DNS服务器发送查询消息，并接收服务器返回的响应消息。对于DNS服务器上一定有相应的DNS客户端，称为DNS解析器，或者简称解析器，通过DNS查询IP地址的操作称为域名解析，因此负责执行这一操作的就叫做就解析器了。</p>
+<p>​        解析器实际上是一段程序，它包含在操作系统的Socket库里(Socket库是用于调用网络功能的程序组件集合)。</p>
+<h3 id="2-3-通过解析器向DNS服务器发出查询"><a href="#2-3-通过解析器向DNS服务器发出查询" class="headerlink" title="2.3 通过解析器向DNS服务器发出查询"></a>2.3 通过解析器向DNS服务器发出查询</h3><p>​        解析器的用法非常简单。Socket库中的程序都是标准组件，只要从应用程序中进行调用就行了。具体来说，在编写浏览器等应用程序的时候，只要像下面这样写上解析器的程序名”gethostbyname” 以及Web服务器的域名”<a target="_blank" rel="noopener" href="http://www.lab.glasscom.com&quot;就行了,这样就完成了对解析器的调用./">www.lab.glasscom.com&quot;就行了，这样就完成了对解析器的调用。</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;应用程序名&gt;  (&lt;参数&gt;)</span><br><span class="line">&#123;</span><br><span class="line">	···</span><br><span class="line">	···</span><br><span class="line">	&lt;内存地址&gt;= gethostbyname (www.lab.glasscom.com);</span><br><span class="line">	···</span><br><span class="line">	···</span><br><span class="line">	&lt;发送HTTP消息&gt;</span><br><span class="line">	···</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#实际上，除此之外还需要编写一些用于分配保存IP地址的内存空间的语句，并在程序开头使用#include 命令将其包含进来.</span><br></pre></td></tr></table></figure>
+
+<p>​        调用解析器后，解析器会向DNS服务器发送查询消息，然后DNS服务器会返回响应消息。响应消息中包含包含查询到的IP地址，解析器会取出IP地址，并将其写入浏览器指定的内存地址中。只要运行上面的程序，就可以完成前面的所有工作，我们也就完成了IP地址的查询。接下来，浏览器在向Web服务器发送消息时，只要从该内存地址中取出IP地址，并将它与HTTP请求消息一起交给操作系统就可以了。</p>
+<ul>
+<li>根据域名查询IP地址时，浏览器会通过程序调用Socket库中的解析器。</li>
+</ul>
+<h3 id="2-4-解析器的内部原理"><a href="#2-4-解析器的内部原理" class="headerlink" title="2.4 解析器的内部原理"></a>2.4 解析器的内部原理</h3><p>​        当调用解析器时，解析器会生成一条“请告诉我<a href="http://www.lab.glasscom.com的IP地址是什么？”的数据，并把它发送给DNS服务器，但是发送信息这个操作并不是用解析器本身完成的，而是委托给操作系统内部的协议栈来执行。这是因为和浏览器一样，解析器本身也也不具备使用网络收发数据的功能。解析器调用协议后，协议栈会执行发送消息的操作，然后通过网卡将消息发送给DNS服务器。">www.lab.glasscom.com的IP地址是什么？”的数据，并把它发送给DNS服务器，但是发送信息这个操作并不是用解析器本身完成的，而是委托给操作系统内部的协议栈来执行。这是因为和浏览器一样，解析器本身也也不具备使用网络收发数据的功能。解析器调用协议后，协议栈会执行发送消息的操作，然后通过网卡将消息发送给DNS服务器。</a></p>
+<ul>
+<li>协议栈:操作系统内部的网络控制软件，也叫 “协议驱动”  “ TCP/IP驱动”等。</li>
+</ul>
+<p>​        总之，如果要访问的Web服务器已经在DNS服务器上注册，那么这条消息就能在被找到，然后IP地址就会被写入响应消息并返回给客户端。接下来，消息经过网络到达客户端，再经过协议栈被传递给解析器。</p>
+<h2 id="3-全世界DNS服务器的大接力"><a href="#3-全世界DNS服务器的大接力" class="headerlink" title="3. 全世界DNS服务器的大接力"></a>3. 全世界DNS服务器的大接力</h2>
       
     </div>
 
